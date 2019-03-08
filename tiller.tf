@@ -134,3 +134,8 @@ resource "kubernetes_deployment" "tiller" {
     command = "kubectl -n kube-system patch deployment tiller-deploy -p '{\"spec\": {\"template\": {\"spec\": {\"automountServiceAccountToken\": true}}}}'"
   }
 }
+
+output "depends_on_hook" {
+  value = "${kubernetes_deployment.tiller.uid}"
+}
+
