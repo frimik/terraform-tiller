@@ -122,12 +122,15 @@ resource "kubernetes_deployment" "tiller" {
             timeout_seconds       = 1
           }
         }
-        # automount_service_account_token = true
-        # service_account = "tiller"
-        service_account_name  = "tiller"
+        service_account_name  = "${var.tiller_service_account}"
         host_network  = "${var.tiller_net_host}"
         node_selector = "${var.tiller_node_selector}"
       }
     }
+  }
+
+  // Adds automountServiceAccountToken to tiller-deploy deployment
+  provisioner "local-exec" {
+    command = "kubectl -n kube-system patch deployment tiller-deploy -p '{\"spec\": {\"template\": {\"spec\": {\"automountServiceAccountToken\": true}}}}'"
   }
 }
