@@ -136,6 +136,6 @@ resource "kubernetes_deployment" "tiller" {
 }
 
 output "depends_on_hook" {
-  value = "${kubernetes_deployment.tiller.uid}"
+  value = "${kubernetes_deployment.tiller.*.uid}"
 }
 
