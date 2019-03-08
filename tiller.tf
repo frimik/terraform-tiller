@@ -122,8 +122,8 @@ resource "kubernetes_deployment" "tiller" {
             timeout_seconds       = 1
           }
         }
-        automount_service_account_token = true
-        service_account = "tiller"
+        # automount_service_account_token = true
+        # service_account = "tiller"
         service_account_name  = "tiller"
         host_network  = "${var.tiller_net_host}"
         node_selector = "${var.tiller_node_selector}"
