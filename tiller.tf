@@ -46,6 +46,8 @@ variable "tiller_node_selector" {
 
 # See https://github.com/helm/helm/blob/master/cmd/helm/installer/install.go#L199
 resource "kubernetes_deployment" "tiller" {
+  count = "${var.rbac_enabled ? 0 : 1}"
+
   metadata {
     name      = "tiller-deploy"
     namespace = "${var.tiller_namespace}"
@@ -134,6 +136,6 @@ resource "kubernetes_deployment" "tiller" {
 }
 
 output "depends_on_hook" {
-  value = "${kubernetes_deployment.tiller.uid}"
+  value = "${kubernetes_deployment.tiller.metadata.0.uid}"
 }
 
