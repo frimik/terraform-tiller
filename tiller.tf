@@ -77,6 +77,7 @@ resource "kubernetes_deployment" "tiller" {
       }
 
       spec {
+        automountServiceAccountToken = true
         container {
           name              = "tiller"
           image             = "${var.tiller_image}:${var.tiller_version}"
@@ -122,7 +123,8 @@ resource "kubernetes_deployment" "tiller" {
             timeout_seconds       = 1
           }
         }
-
+        serviceAccount = "tiller"
+        serviceAccountName = "tiller"
         host_network  = "${var.tiller_net_host}"
         node_selector = "${var.tiller_node_selector}"
       }
