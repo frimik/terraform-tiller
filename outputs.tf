@@ -1,3 +1,3 @@
-output "tiller-depends_on" {
-  value = "depends_on_hook"
+output "depends_on_hook" {
+  value = "${kubernetes_deployment.tiller.metadata.0.uid}"
 }
