@@ -135,6 +135,16 @@ resource "kubernetes_deployment" "tiller" {
   }
 }
 
+
+resource "null_resource" "wait_for_tiller" {
+  provisioner "local-exec" {
+    command = "${file("${path.module}/verify-tiller.sh")}"
+  }
+
+  depends_on = ["kubernetes_deployment.tiller"]
+}
+
+
 output "depends_on_hook" {
   value = "${kubernetes_deployment.tiller.metadata.0.uid}"
 }
