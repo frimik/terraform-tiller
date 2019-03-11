@@ -1,3 +1,9 @@
+resource "null_resource" "dependency_getter" {
+  provisioner "local-exec" {
+    command = "echo ${length(var.dependencies)}"
+  }
+}
+
 variable "tiller_namespace" {
   type        = "string"
   default     = "kube-system"
@@ -133,8 +139,11 @@ resource "kubernetes_deployment" "tiller" {
   provisioner "local-exec" {
     command = "kubectl -n kube-system patch deployment tiller-deploy -p '{\"spec\": {\"template\": {\"spec\": {\"automountServiceAccountToken\": true}}}}'"
   }
-}
 
+  depends_on = [
+    "null_resource.dependency_getter",
+  ]
+}
 
 resource "null_resource" "wait_for_tiller" {
   provisioner "local-exec" {
@@ -145,8 +154,13 @@ resource "null_resource" "wait_for_tiller" {
   depends_on = ["kubernetes_deployment.tiller"]
 }
 
+resource "null_resource" "dependency_setter" {
+  depends_on = [
+    "null_resource.wait_for_tiller"
+  ]
+}
 
-output "depends_on_hook" {
-  value = "${null_resource.wait_for_tiller.id}"
+output "depended_on" {
+  value = "${null_resource.dependency_setter.id}"
 }
 
