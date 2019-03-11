@@ -148,5 +148,6 @@ resource "null_resource" "wait_for_tiller" {
 
 output "depends_on_hook" {
   value = "${kubernetes_deployment.tiller.metadata.0.uid}"
+  depends_on = ["null_resource.wait_for_tiller"]
 }
 
