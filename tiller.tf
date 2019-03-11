@@ -139,6 +139,7 @@ resource "kubernetes_deployment" "tiller" {
 resource "null_resource" "wait_for_tiller" {
   provisioner "local-exec" {
     command = "${file("${path.module}/verify-tiller.sh")}"
+    interpreter = ["bash", "-c"]
   }
 
   depends_on = ["kubernetes_deployment.tiller"]
