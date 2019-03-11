@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # 5 mins
-max_wait=300
+max_wait=5
 
 wait_for_tiller () {
 	kubectl --namespace kube-system get pods \
@@ -12,9 +12,14 @@ wait_for_tiller () {
 
 while [[ ${max_wait} -gt 0 ]]; do 
 	wait_for_tiller
-	echo "Waiting for tiller-deploy to be ready..."
-	max_wait=$(($max_wait - 30));
+	max_wait=$(($max_wait - 5));
 	sleep 5
 done
+
+if [${max_wait} -eq 0]
+	then
+		echo "Failed waiting for tiller-deploy"
+		exit 1
+fi
 
 echo "tiller-deploy is ready"
