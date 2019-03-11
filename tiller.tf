@@ -137,7 +137,7 @@ resource "kubernetes_deployment" "tiller" {
 
   // Adds automountServiceAccountToken to tiller-deploy deployment
   provisioner "local-exec" {
-    command = "kubectl -n kube-system patch deployment tiller-deploy -p '{\"spec\": {\"template\": {\"spec\": {\"automountServiceAccountToken\": true}}}}'"
+    command = "kubectl -n kube-system patch deployment tiller-deploy -p '{\"spec\": {\"template\": {\"spec\": {\"automountServiceAccountToken\": true}}}}' && sleep 5"
   }
 
   depends_on = [
