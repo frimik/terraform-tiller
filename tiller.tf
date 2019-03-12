@@ -28,25 +28,25 @@ variable "tiller_image" {
 }
 
 variable "tiller_version" {
-  type        = "string"
-  default     = "v2.11.0"
+  type = "string"
+  default = "v2.11.0"
   description = "The Tiller image version to install."
 }
 
 variable "tiller_max_history" {
-  default     = 0
+  default = 0
   description = "Limit the maximum number of revisions saved per release. Use 0 for no limit."
 }
 
 variable "tiller_net_host" {
-  type        = "string"
-  default     = ""
+  type = "string"
+  default = ""
   description = "Install Tiller with net=host."
 }
 
 variable "tiller_node_selector" {
-  type        = "map"
-  default     = {}
+  type = "map"
+  default = {}
   description = "Determine which nodes Tiller can land on."
 }
 
@@ -55,11 +55,11 @@ resource "kubernetes_deployment" "tiller" {
   count = "${var.rbac_enabled ? 0 : 1}"
 
   metadata {
-    name      = "tiller-deploy"
+    name = "tiller-deploy"
     namespace = "${var.tiller_namespace}"
 
     labels {
-      app  = "helm"
+      app = "helm"
       name = "tiller"
     }
   }
@@ -69,7 +69,7 @@ resource "kubernetes_deployment" "tiller" {
 
     selector {
       match_labels {
-        app  = "helm"
+        app = "helm"
         name = "tiller"
       }
     }
@@ -77,34 +77,34 @@ resource "kubernetes_deployment" "tiller" {
     template {
       metadata {
         labels {
-          app  = "helm"
+          app = "helm"
           name = "tiller"
         }
       }
 
       spec {
         container {
-          name              = "tiller"
-          image             = "${var.tiller_image}:${var.tiller_version}"
+          name = "tiller"
+          image = "${var.tiller_image}:${var.tiller_version}"
           image_pull_policy = "IfNotPresent"
 
           port {
-            name           = "tiller"
+            name = "tiller"
             container_port = 44134
           }
 
           port {
-            name           = "http"
+            name = "http"
             container_port = 44135
           }
 
           env {
-            name  = "TILLER_NAMESPACE"
+            name = "TILLER_NAMESPACE"
             value = "${var.tiller_namespace}"
           }
 
           env {
-            name  = "TILLER_HISTORY_MAX"
+            name = "TILLER_HISTORY_MAX"
             value = "${var.tiller_max_history}"
           }
 
@@ -115,7 +115,7 @@ resource "kubernetes_deployment" "tiller" {
             }
 
             initial_delay_seconds = 1
-            timeout_seconds       = 1
+            timeout_seconds = 1
           }
 
           readiness_probe {
@@ -125,19 +125,14 @@ resource "kubernetes_deployment" "tiller" {
             }
 
             initial_delay_seconds = 1
-            timeout_seconds       = 1
+            timeout_seconds = 1
           }
         }
-        service_account_name  = "${var.tiller_service_account}"
-        host_network  = "${var.tiller_net_host}"
+        service_account_name = "${var.tiller_service_account}"
+        host_network = "${var.tiller_net_host}"
         node_selector = "${var.tiller_node_selector}"
       }
     }
-  }
-
-  // Adds automountServiceAccountToken to tiller-deploy deployment
-  provisioner "local-exec" {
-    command = "kubectl -n kube-system patch deployment tiller-deploy -p '{\"spec\": {\"template\": {\"spec\": {\"automountServiceAccountToken\": true}}}}' && sleep 5"
   }
 
   depends_on = [
@@ -145,13 +140,22 @@ resource "kubernetes_deployment" "tiller" {
   ]
 }
 
+resource "null_resource" "patch_tiller" {
+  provisioner "local-exec" {
+    command = "${file("${path.module}/patch-tiller.sh")}"
+    interpreter = ["bash", "-c"]
+  }
+  depends_on = ["kubernetes_deployment.tiller"]
+}
+
+
 resource "null_resource" "wait_for_tiller" {
   provisioner "local-exec" {
     command = "${file("${path.module}/verify-tiller.sh")}"
     interpreter = ["bash", "-c"]
   }
 
-  depends_on = ["kubernetes_deployment.tiller"]
+  depends_on = ["null_resource.patch_tiller"]
 }
 
 resource "null_resource" "dependency_setter" {
