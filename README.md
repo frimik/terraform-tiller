@@ -20,17 +20,17 @@ module "tiller" {
 
 ## Configuration
 
-| Name | Default | Description |
-| ---- | ------- | ----------- |
-| rbac_enabled | false | Whether to create role-based access control resources (service account and cluster role binding). |
-| tiller_namespace | kube-system | The Kubernetes namespace to use to deploy Tiller. |
-| tiller_service_account | tiller | The Kubernetes service account to add to Tiller. |
-| tiller_replicas | 1 | The amount of Tiller instances to run on the cluster. |
-| tiller_image | gcr.io/kubernetes-helm/tiller | The image used to install Tiller. |
-| tiller_version | v2.11.0 | The Tiller image version to install. |
-| tiller_max_history | 0 (unlimited) | Limit the maximum number of revisions saved per release. Use 0 for no limit. |
-| tiller_net_host | *empty* | Install Tiller with net=host. |
-| tiller_node_selector | *empty* | Determine which nodes Tiller can land on. |
+| Name                   | Default                       | Description                                                                                       |
+| ---------------------- | ----------------------------- | ------------------------------------------------------------------------------------------------- |
+| rbac_enabled           | false                         | Whether to create role-based access control resources (service account and cluster role binding). |
+| tiller_namespace       | kube-system                   | The Kubernetes namespace to use to deploy Tiller.                                                 |
+| tiller_service_account | tiller                        | The Kubernetes service account to add to Tiller.                                                  |
+| tiller_replicas        | 1                             | The amount of Tiller instances to run on the cluster.                                             |
+| tiller_image           | gcr.io/kubernetes-helm/tiller | The image used to install Tiller.                                                                 |
+| tiller_version         | v2.12.3                       | The Tiller image version to install.                                                              |
+| tiller_max_history     | 0 (unlimited)                 | Limit the maximum number of revisions saved per release. Use 0 for no limit.                      |
+| tiller_net_host        | *empty*                       | Install Tiller with net=host.                                                                     |
+| tiller_node_selector   | *empty*                       | Determine which nodes Tiller can land on.                                                         |
 
 
 ## Initial Chart installation
